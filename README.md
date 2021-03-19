@@ -1,0 +1,2 @@
+# FunctionalPortfolioOptimization
+Optimization of Generating Function
