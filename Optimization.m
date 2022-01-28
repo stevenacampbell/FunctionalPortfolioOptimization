@@ -4,13 +4,13 @@
 
 %%% IMPORT DATA %%%
 
-%Import (\vec{p},\vec{q}) data where \vec{q}=\vec{p}_kr_k/<\vec{p},r>
+%Import (u,v) data where v=u_kr_k/<u,r>
 %The data is of dimention nxT where n is the number of stocks and T
 %is the number of periods
-filename0='vecpdata.csv';
-vecp = readmatrix(filename0);
-filename1='vecqdata.csv';
-vecq = readmatrix(filename1);
+filename0='u_data.csv';
+vecu = readmatrix(filename0);
+filename1='v_data.csv';
+vecv = readmatrix(filename1);
 
 %Import the grid points for the piecewise affine function
 filename2='grid.csv';
@@ -21,8 +21,9 @@ dg = diff(g);
 
 %%% PROBLEM SETTINGS %%%
 
-% Note: The objective function optimized here is rescaled by a factor of T.
-% See the associated paper for the original statement of the problem.
+% Note: The objective function optimized here is rescaled by a factor of T
+% and does not include the term corresponding to a re-weighted diversity.
+% See the associated paper for the original and most general statement of the problem.
     
 %Option for the Monotonicity of Port. Weights 1-Yes, 0-No
 Mon = 0; 
@@ -35,7 +36,7 @@ val=0.5;
 beta = 1000000;
 
 %Recover problem parameters from imported data
-dims = size(vecp); %Get input dimensions
+dims = size(vecu); %Get input dimensions
 T = dims(2); %# of Periods
 n = dims(1); %# of Stocks
 d=length(g); %Dimension of Grid
@@ -54,13 +55,13 @@ cvx_begin
     %Build objective function
     for i=1:T
         s(i)=1;
-        dqp=(vecq(:,i)-vecp(:,i));
+        dvu=(vecv(:,i)-vecu(:,i));
         for j=1:n
-            k=MatchGrid(vecp(j,i),g);
+            k=MatchGrid(vecu(j,i),g);
             if k==d
                k = idx-1;
             end
-            s(i)=s(i)+(dqp(j)/(dg(k)*n))*dx(k);
+            s(i)=s(i)+(dvu(j)/(dg(k)*n))*dx(k);
         end
     end
     obj = sum(log(s)); 
