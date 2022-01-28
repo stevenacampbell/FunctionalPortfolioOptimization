@@ -59,7 +59,7 @@ cvx_begin
         for j=1:n
             k=MatchGrid(vecu(j,i),g);
             if k==d
-               k = idx-1;
+               k = d-1;
             end
             s(i)=s(i)+(dvu(j)/(dg(k)*n))*dx(k);
         end
